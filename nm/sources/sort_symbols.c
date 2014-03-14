@@ -5,7 +5,7 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Thu Mar 13 21:22:28 2014 raphael defreitas
-** Last update Fri Mar 14 02:31:07 2014 raphael defreitas
+** Last update Fri Mar 14 16:26:24 2014 raphael defreitas
 */
 
 #include	<elf.h>
@@ -29,9 +29,9 @@ static int	compare(t_dumper *dumper, Elf64_Sym *sym1, Elf64_Sym *sym2)
   i2 = 0;
   while (name1[i1] && name2[i2])
     {
-      while (name1[i1] && name1[i1] == '_')
+      while (name1[i1] && (name1[i1] == '_' || name1[i1] == '.'))
 	i1++;
-      while (name2[i2] && name2[i2] == '_')
+      while (name2[i2] && (name2[i2] == '_' || name2[i2] == '.'))
 	i2++;
       if (tolower(name1[i1]) - tolower(name2[i2]) != 0)
 	return (tolower(name1[i1]) - tolower(name2[i2]));

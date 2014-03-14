@@ -1,5 +1,7 @@
 *~
 *.o
+./tests
+./utils
 my_nm
 my_objdump
 

@@ -5,7 +5,7 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Tue Mar 11 11:34:37 2014 raphael defreitas
-** Last update Fri Mar 14 02:40:38 2014 raphael defreitas
+** Last update Fri Mar 14 16:25:49 2014 raphael defreitas
 */
 
 #include	<elf.h>
@@ -20,19 +20,20 @@
 void		sort_symbols(t_dumper *dumper);
 char		symbol_char(t_dumper *dumper, Elf64_Sym *sym);
 
-static void	display_symbol(t_dumper *dumper, Elf64_Sym *sym, int *first)
+static void	display_symbol(t_dumper *dumper, Elf64_Sym *sym)
 {
   const char	*name;
+  char		type;
 
   name = dumper_get_sym_name(dumper, sym);
+  type = symbol_char(dumper, sym);
   if (name[0] == '\0' || ELF64_ST_TYPE(sym->st_info) == STT_FILE)
     return ;
-  if (sym->st_value == 0 && !*first)
+  if (type == 'U')
     printf("%s", "                ");
   else
     printf("%016lx", sym->st_value);
-  *first = 0;
-  printf(" %c %s\n", symbol_char(dumper, sym), name);
+  printf(" %c %s\n", type, name);
 }
 
 static int	load_dumper(t_dumper *dumper, const char *file)
@@ -55,10 +56,7 @@ static void	my_nm(const char *file, int display_file)
   t_dumper	d;
   int		i;
   Elf64_Sym	*sym;
-  Elf64_Sym	*s2;
-  int		first;
 
-  first = 1;
   if (load_dumper(&d, file) != RET_SUCCESS)
     return ;
   if (display_file)
@@ -67,9 +65,7 @@ static void	my_nm(const char *file, int display_file)
   i = 1;
   while ((sym = dumper_get_sym_by_index(&d, i)))
     {
-      if ((s2 = dumper_get_sym_by_index(&d, i + 1)) && s2->st_value != 0)
-	first = 0;
-      display_symbol(&d, sym, &first);
+      display_symbol(&d, sym);
       i++;
     }
   dumper_dtor(&d);

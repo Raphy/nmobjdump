@@ -5,14 +5,18 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Tue Mar 11 11:36:14 2014 raphael defreitas
-** Last update Tue Mar 11 11:58:09 2014 raphael defreitas
+** Last update Fri Mar 14 03:09:16 2014 raphael defreitas
 */
 
 #include	<stdio.h>
 #include	<stdlib.h>
 
+#include	"opts.h"
+
 int		main(int argc, char **argv)
 {
-  printf("%s with %d parameter%c\n", argv[0], argc, (argc > 1 ? 's' : '\0'));
+  t_opts	opts;
+
+  opts_ctor(&opts, argc, argv);
   return (EXIT_SUCCESS);
 }

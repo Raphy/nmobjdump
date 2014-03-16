@@ -5,7 +5,7 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Thu Mar 13 18:52:58 2014 raphael defreitas
-** Last update Thu Mar 13 19:49:30 2014 raphael defreitas
+** Last update Sat Mar 15 19:40:57 2014 raphael defreitas
 */
 
 #include	<stdlib.h>
@@ -18,6 +18,8 @@ int		dumper_load_shdrs(t_dumper *this)
 {
   int		i;
 
+  if (this->ehdr == NULL && dumper_load(this) != RET_SUCCESS)
+    return (RET_FAILURE);
   if (this->shdrs != NULL)
     return (RET_SUCCESS);
   this->shdrs = xmalloc(this->ehdr->e_shnum * this->ehdr->e_shentsize);

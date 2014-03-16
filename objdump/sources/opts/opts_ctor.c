@@ -5,7 +5,7 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Fri Mar 14 02:51:42 2014 raphael defreitas
-** Last update Fri Mar 14 03:10:06 2014 raphael defreitas
+** Last update Sat Mar 15 19:21:17 2014 raphael defreitas
 */
 
 #include	<stdlib.h>
@@ -19,6 +19,7 @@ static void	set_default_values(t_opts *this)
 {
   this->file_headers = 0;
   this->full_contents = 0;
+  this->help = 0;
   this->files = NULL;
 }
 
@@ -30,15 +31,16 @@ static int	parse_short_opts(t_opts *this, int ac, char **av)
   i = 0;
   while (++i < ac)
     {
-      if (av[i][0] == '-' && av[i][1] != '-')
+      if (av[i][0] == '-' && !(j = 0))
 	{
-	  j = 0;
 	  while (av[i][++j])
 	    {
 	      if (av[i][j] == 's')
 		this->full_contents = 1;
 	      else if (av[i][j] == 'f')
 		this->file_headers = 1;
+	      else if (av[i][j] == 'h')
+		this->help = 1;
 	      else
 		{
 		  fprintf(stderr, "Unknown parameter: -%c\n", av[i][j]);
@@ -63,6 +65,8 @@ static int	parse_long_opts(t_opts *this, int ac, char **av)
 	    this->full_contents = 1;
 	  else if (strcmp(av[i] + 2, "file-headers") == 0)
 	    this->file_headers = 1;
+	  else if (strcmp(av[i] + 2, "help") == 0)
+	    this->help = 1;
 	  else
 	    {
 	      fprintf(stderr, "Unknown parameter: --%s\n", av[i] + 2);
@@ -94,7 +98,7 @@ static int	parse_file_opts(t_opts *this, int ac, char **av)
 	  this->files[j] = strdup(av[i]);
 	  j++;
 	}
-    }  
+    }
   this->files[j] = NULL;
   return (RET_SUCCESS);
 }
@@ -108,6 +112,5 @@ int		opts_ctor(t_opts *this, int ac, char **av)
     {
       return (RET_FAILURE);
     }
-      
   return (RET_SUCCESS);
 }

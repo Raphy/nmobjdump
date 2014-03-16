@@ -5,7 +5,7 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Tue Mar 11 11:34:37 2014 raphael defreitas
-** Last update Fri Mar 14 16:25:49 2014 raphael defreitas
+** Last update Sat Mar 15 19:32:34 2014 raphael defreitas
 */
 
 #include	<elf.h>
@@ -18,18 +18,20 @@
 #include	"xfunctions.h"
 
 void		sort_symbols(t_dumper *dumper);
-char		symbol_char(t_dumper *dumper, Elf64_Sym *sym);
+char		get_symbol_type(t_dumper *dumper, Elf64_Sym *sym);
 
 static void	display_symbol(t_dumper *dumper, Elf64_Sym *sym)
 {
   const char	*name;
   char		type;
+  Elf64_Shdr	*shdr;
 
   name = dumper_get_sym_name(dumper, sym);
-  type = symbol_char(dumper, sym);
+  shdr = dumper_get_shdr_by_index(dumper, sym->st_shndx);
+  type = get_symbol_type(dumper, sym);
   if (name[0] == '\0' || ELF64_ST_TYPE(sym->st_info) == STT_FILE)
     return ;
-  if (type == 'U')
+  if (type == 'U' || type == 'w')
     printf("%s", "                ");
   else
     printf("%016lx", sym->st_value);

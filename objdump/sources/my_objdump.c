@@ -5,7 +5,7 @@
 ** Login   <defrei_r@epitech.net>
 ** 
 ** Started on  Fri Mar 14 17:28:51 2014 raphael defreitas
-** Last update Sun Mar 16 04:01:23 2014 raphael defreitas
+** Last update Sun Mar 16 17:08:45 2014 raphael defreitas
 */
 
 #include	<elf.h>
@@ -23,14 +23,12 @@ void		print_header(t_dumper *dumper);
 
 static const char	*get_file_format(t_dumper *dumper)
 {
+  dumper = (void *)dumper;
   return ("elf64-x86-64");
 }
 
-static int	is_displayable(t_dumper *dumper, Elf64_Shdr *shdr)
+static int	is_displayable(Elf64_Shdr *shdr)
 {
-  const char	*n;
-
-  n = dumper_get_shdr_name(dumper, shdr);
   if (shdr->sh_size == 0)
     return (0);
   if (shdr->sh_type == SHT_NOBITS)
@@ -52,7 +50,7 @@ static void	print_sections(t_dumper *dumper)
   i = 0;
   while ((shdr = dumper_get_shdr_by_index(dumper, i)))
     {
-      if (is_displayable(dumper, shdr))
+      if (is_displayable(shdr))
 	{
 	  printf("Contents of section %s:\n",
 		 dumper_get_shdr_name(dumper, shdr));

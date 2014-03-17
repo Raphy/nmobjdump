@@ -1,0 +1,64 @@
+#!/usr/bin/env php
+<?php
+define('TESTS_DIRECTORY_NAME', 'tests');
+define('TESTS_DIRECTORY_PATH', dirname(__FILE__).DIRECTORY_SEPARATOR.TESTS_DIRECTORY_NAME);
+
+$user_bin = ($argc > 1) ? $argv[1] : './my_nm';
+$system_bin = ($argc > 2) ? $argv[2] : 'nm';
+
+echo 'USER_BIN: '.$user_bin.PHP_EOL;
+echo 'SYSTEM_BIN: '.$system_bin.PHP_EOL;
+
+$goods = 0;
+$bads = 0;
+$unknown = 0;
+$bad_files = array();
+$unknown_files = array();
+if (($handle = opendir(TESTS_DIRECTORY_PATH))) {
+    while (($file = readdir($handle))) {
+	if ($file[0] != '.') {
+	    $base_file = $file;
+	    $file = TESTS_DIRECTORY_PATH.DIRECTORY_SEPARATOR.$file;
+	    @unlink('user');
+	    @unlink('system');	
+	    passthru($user_bin.' '.$file.' > user', $user_ret);
+	    passthru($system_bin.' '.$file.' > system', $system_ret);
+	    $diff = exec('diff --suppress-common-lines user system', $out, $diff_ret);
+	    if ($diff_ret == 0 || empty($diff || ($user_ret != 0 && $system_ret != 0))) {
+		echo "\033[032m".$base_file."\033[0m".PHP_EOL;
+		$goods++;
+	      }
+	    else if (preg_match('#No newline at end of file#', $diff) == false) {
+		  echo "\033[1m\033[031m".$base_file."\033[0m".PHP_EOL;
+		  $bad_files[] = $base_file;
+		  echo $diff.PHP_EOL;
+		  $bads++;
+		  readline("[BAD] Press any key to continue...");
+		}
+	    else
+	      {
+		echo "\033[1m\033[035m".$base_file."\033[0m".PHP_EOL;
+		$unknown_files[] = $base_file;
+		$unknown++;
+		readline("[Unknown] Press any key to continue...");
+	      }
+	  }
+	echo "\033[0m";
+      }
+    closedir($handle);
+    if ($goods + $bads == 0)
+       exit('No tests'.PHP_EOL);
+    unlink('user');
+    unlink('system');
+    echo "\033[1m---------------------------------------------------------------------------\033[0m".PHP_EOL;
+    $total = $goods + $bads + $unknown;
+    echo "\033[1m".($total)."\033[0m files tested -  ";
+    echo "\033[1m".$goods."\033[0m (\033[1m".round(($goods / ($total)) * 100, 1)."%\033[0m) files good - ";
+    echo "\033[1m".$bads."\033[0m (\033[1m".round(($bads / ($total)) * 100, 1)."%\033[0m) files bad - ";
+echo "\033[1m".$unknown."\033[0m (\033[1m".round(($unknown / ($total)) * 100, 1)."%\033[0m) files unknwon";
+    echo PHP_EOL;
+    echo "\033[1mBad files:    \033[0m ".implode(', ', $bad_files).PHP_EOL;
+    echo "\033[1mUnknwon files:\033[0m ".implode(', ', $unknwon_files).PHP_EOL;
+  }
+else
+  exit('The tests directory is missing'.PHP_EOL);
